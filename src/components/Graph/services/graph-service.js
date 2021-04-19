@@ -86,37 +86,28 @@ class GraphSinkService {
     paper.on({
       // Unembed the element that has just been grabbed by the user.
       'element:pointerdown': function(elementView, evt) {
-        if (!keyboard.isActive('shift', evt)) {
-          const element = elementView.model
+        evt.data = {
+          coordinates: elementView.model.position(),
+          parent: elementView.model.get('parent')
+        }
 
-          if (!element.get('embeds') || element.get('embeds').length === 0) {
-            // Show the dragged element above all the other cells (except when the
-            // element is a parent).
-            element.toFront()
-          }
+        const element = elementView.model
 
-          if (element.get('parent')) {
-            graph.getCell(element.get('parent')).unembed(element)
-          }
+        if (!element.get('embeds') || element.get('embeds').length === 0) {
+          // Show the dragged element above all the other cells (except when the
+          // element is a parent).
+          element.toFront()
+        }
+
+        if (element.get('parent')) {
+          graph.getCell(element.get('parent')).unembed(element)
         }
       },
 
       'element:pointerup': function(elementView, evt, x, y) {
         if (!keyboard.isActive('shift', evt)) {
           embedElement(this.model, elementView.model)
-        }
-      }
-    })
-
-    paper.on({
-      'element:pointerdown': function(elementView, evt) {
-        if (keyboard.isActive('shift', evt)) {
-          evt.data = elementView.model.position()
-        }
-      },
-
-      'element:pointerup': function(elementView, evt, x, y) {
-        if (keyboard.isActive('shift', evt) && evt.data) {
+        } else {
           const coordinates = new joint.g.Point(x, y)
           const elementAbove = elementView.model
           const elementBelow = findElementBelow(
@@ -126,17 +117,22 @@ class GraphSinkService {
           )
           const elementBelowPosition = elementBelow && elementBelow.position()
 
-          if (
-            elementBelow &&
-            elementBelow.get('parent') === elementAbove.get('parent')
-          ) {
-            elementBelow.position(evt.data.x, evt.data.y)
+          if (elementBelow && elementBelow.get('parent') === evt.data.parent) {
+            elementBelow.position(
+              evt.data.coordinates.x,
+              evt.data.coordinates.y
+            )
             elementAbove.position(
               elementBelowPosition.x,
               elementBelowPosition.y
             )
+            embedElement(this.model, elementAbove)
           } else {
-            elementAbove.position(evt.data.x, evt.data.y)
+            elementAbove.position(
+              evt.data.coordinates.x,
+              evt.data.coordinates.y
+            )
+            embedElement(this.model, elementAbove)
           }
         }
       }
