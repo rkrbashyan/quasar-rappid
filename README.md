@@ -62,5 +62,5 @@
         3. Graph is persisted to LocalStorage.
         
 ## TODOs
-- [x] test 1
-- [ ] test 2
+-    [x] test 1
+-    [ ] test 2
