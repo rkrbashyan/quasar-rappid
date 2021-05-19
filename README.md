@@ -63,4 +63,4 @@
         
 ## TODOs
 -    [x] test 1
--    [ ] test 2
+-    [X] test 2
