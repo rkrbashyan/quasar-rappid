@@ -60,3 +60,7 @@
         3. To change positions inside one container - drag&drop with SHIFT key pressed.
 
         3. Graph is persisted to LocalStorage.
+        
+## TODOs
+- [x] test 1
+- [ ] test 2
